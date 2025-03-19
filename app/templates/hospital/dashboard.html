@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 250px;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .side-panel h2 {
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .side-panel a {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            margin: 5px 0;  /* Reduced space between buttons */
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .side-panel a:hover {
+            background-color: #2980b9;
+        
+        }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;  /* Ensures header spans full width */
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 900px;  /* Limits the profile width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3498db;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            text-align: left;  /* Align text to the left */
+            width: 100%;
+        }
+
+        .profile-info h2 {
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        .profile-info p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+
+        .edit-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            .main-content {
+                padding: 10px;
+            }
+        }
+        .alert {
+            display: none;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .alert.show {
+            display: block;
+        }
+        .side-panel.logout-btn button:hover {
+        background-color: rgb(255, 255, 255);
+        color: rgb(245, 7, 7);
+    }
+    .review-card {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .stars {
+        color: #f1c40f;
+        font-size: 18px;
+    }
+    hr {
+        border: 0;
+        height: 1px;
+        background-color: #ddd;
+        margin: 20px 0;
+    }
+    </style>
+<script>
+    function showAlert(message) {
+        const alertBox = document.getElementById('alert');
+        alertBox.textContent = message;
+        alertBox.classList.add('show');
+        setTimeout(() => {
+            alertBox.classList.remove('show');
+        }, 3000);
+    }
+
+    function navigateToEditPage() {
+        window.location.href = '/hospital/profile/update';
+    }
+
+    window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();  // Reload the page if it was loaded from cache
+            }
+        });
+
+</script>
+</head>
+<body>
+<div class="container">
+    <div class="side-panel">
+        <h2>Med Finder</h2>
+        <a href="/hospital/dashboard">Profile</a>
+        <a href="/hospital/doctors">Doctors</a>
+        <a href="/hospital/appointments">Appointments</a>
+        <a href="/hospital/clients">Clients</a>
+        <div class="logout-btn" style=text-align: center;">
+            <form action="/hospital/logout">
+                <button type="submit" style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Med Finder</h1>
+            <p>Connecting care with convenience, one hospital at a time.</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="profile-container">
+            <img src="/hospital/hospital-image/{{ hospital.id }}" alt="Hospital Image" class="profile-image">
+            <div class="profile-info">
+                <h2>{{ hospital.name }}</h2>
+                <p><strong>Address:</strong> {{ hospital.address }}</p>
+                <p><strong>Phone Number:</strong> {{ hospital.phone_number }}</p>
+                <p><strong>Location:</strong> 
+                    <a href="{{ hospital.gmap_location }}" target="_blank">
+                        Open in Google Maps
+                    </a>
+                </p>
+                <p><strong>Pin Code:</strong> {{ hospital.pin_code }}</p>
+                <p><strong>Description:</strong> {{ hospital.description }}</p>
+                <button class="edit-btn" onclick="navigateToEditPage()">Edit Profile</button>
+            </div>
+        </div>
+        <div class="profile-container">
+            <h2>Reviews and Replies</h2>
+            <div id="reviews-container">
+                <!-- Reviews will be dynamically loaded here -->
+                <p>Loading reviews...</p>
+            </div>
+        </div>
+        
+        <script>
+            // Fetch reviews and populate the reviews section
+            async function loadReviews() {
+                const hospitalId = {{ hospital.id }};
+                const response = await fetch(`/hospital/reviews/${hospitalId}`);
+                const reviewsContainer = document.getElementById('reviews-container');
+        
+                if (response.ok) {
+                    const reviews = await response.json();
+                    if (reviews.length > 0) {
+                        reviewsContainer.innerHTML = reviews.map(review => `
+                            <div class="review-card">
+                                <p><strong>Client:</strong> ${review.client_name}</p>
+                                <p><strong>Rating:</strong>
+                                    <span class="stars">
+                                        ${'&#9733;'.repeat(review.rating)}${'&#9734;'.repeat(5 - review.rating)}
+                                    </span>
+                                </p>
+                                <p><strong>Review:</strong> ${review.review_text}</p>
+                                <p><strong>Reply:</strong> ${review.reply_text || 'No reply yet'}</p>
+                                <form class="reply-form" data-review-id="${review.id}" style="margin-top: 10px;">
+                                    <textarea name="reply_text" rows="2" style="width: 100%; padding: 10px;" placeholder="Write a reply...">${review.reply_text || ''}</textarea>
+                                    <button type="submit" style="margin-top: 10px; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                        Submit Reply
+                                    </button>
+                                </form>
+                            </div>
+                            <hr>
+                        `).join('');
+                    } else {
+                        reviewsContainer.innerHTML = `<p>No reviews yet.</p>`;
+                    }
+                } else {
+                    reviewsContainer.innerHTML = `<p>Failed to load reviews. Please try again later.</p>`;
+                }
+            }
+        
+            // Handle reply submission
+            document.addEventListener('submit', async (event) => {
+                if (event.target.matches('.reply-form')) {
+                    event.preventDefault();
+                    const form = event.target;
+                    const reviewId = form.getAttribute('data-review-id');
+                    const replyText = form.reply_text.value;
+        
+                    const response = await fetch(`/hospital/reply/${reviewId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ reply_text: replyText }),
+                    });
+        
+                    if (response.ok) {
+                        alert('Reply submitted successfully!');
+                        loadReviews(); // Reload reviews after reply
+                    } else {
+                        alert('Failed to submit reply. Please try again.');
+                    }
+                }
+            });
+        
+            // Load reviews on page load
+            window.onload = loadReviews;
+        </script>
+    </div>
+</div>
+</body>
+</html>

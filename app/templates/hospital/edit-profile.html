@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 250px;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .side-panel h2 {
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .side-panel a {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .side-panel a:hover {
+            background-color: #2980b9;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-group button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            .main-content {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="container">
+        <div class="side-panel">
+            <h2>Med Finder</h2>
+            <a href="/hospital/dashboard">Profile</a>
+            <a href="/hospital/doctors">Doctors</a>
+            <a href="/hospital/appointments">Appointments</a>
+            <a href="/hospital/clients">Clients</a>
+            <div class="logout-btn" style=text-align: center;">
+                <form action="/hospital/logout" method="post">
+                    <button type="submit" style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Edit Profile</h1>
+            <p>Update your hospital details below.</p>
+        </div>
+
+        <div class="form-container">
+            <form action="{{ url_for('hospital_routes.update_hospital_profile') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Hospital Name</label>
+                    <input type="text" id="name" name="name" value="{{ hospital.name }}">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" value="{{ hospital.address }}">
+                </div>
+                <div class="form-group">
+                    <label for="gmap_location">Google Map Location</label>
+                    <input type="text" id="gmap_location" name="gmap_location" value="{{ hospital.gmap_location }}">
+                </div>
+                <div class="form-group">
+                    <label for="pin_code">Pin Code</label>
+                    <input type="text" id="pin_code" name="pin_code" value="{{ hospital.pin_code }}">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description">{{ hospital.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="image">Profile Image</label>
+                    <input type="file" id="image" name="image">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    
+    window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();  // Reload the page if it was loaded from cache
+            }
+        });
+</script>
+</body>
+</html>

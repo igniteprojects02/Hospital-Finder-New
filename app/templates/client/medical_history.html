@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 20px;  /* Adds spacing between the cards */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Card shadow effect */
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        ul li:hover {
+            transform: translateY(-5px);  /* Slight lifting effect on hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);  /* Stronger shadow on hover */
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .card-content {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .back-button, .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .download-button:hover, .back-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+
+    <div class="container">
+        <h2>Medical History</h2>
+
+        {% if medical_histories %}
+            <ul>
+                {% for history in medical_histories %}
+                    <li>
+                        <div class="card-header">
+                            <strong>Hospital:</strong> {{ history.hospital_name }}
+                        </div>
+                        <div class="card-content">
+                            <strong>Doctor:</strong> {{ history.doctor_name }}<br>
+                            <strong>Medical Note:</strong> {{ history.medical_note }}<br>
+                            <strong>Timestamp:</strong> {{ history.timestamp }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>{{ message }}</p>
+        {% endif %}
+
+        <div class="button-container">
+            <a href="/client/download-medical-history-pdf" class="download-button">Download as PDF</a>
+        </div>
+        <br>
+        <br>
+
+        <a href="/client/dashboard" class="back-button">Back to Dashboard</a>
+    </div>
+</body>
+</html>

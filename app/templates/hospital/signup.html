@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header .back-home {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        .header .back-home a {
+            text-decoration: none;
+            color: #3498db;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+        }
+
+        .header .back-home a:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title h1 {
+            font-size: 28px;
+            color: #3498db;
+            margin: 0;
+        }
+
+        .title p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        label {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .phone-container, .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #34495e;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        #phone_number {
+            padding-left: 45px;
+        }
+
+        #toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            color: #34495e;
+        }
+
+        #toggle-password:hover {
+            color: #2980b9;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #error-message {
+            margin-top: 10px;
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        async function hospitalSignup(event) {
+            event.preventDefault();
+
+            const phoneNumber = document.getElementById('phone_number').value;
+            const formattedPhoneNumber = `+91${phoneNumber}`;
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('address', document.getElementById('address').value);
+            formData.append('gmap_location', document.getElementById('gmap_location').value);
+            formData.append('pin_code', document.getElementById('pin_code').value);
+            formData.append('phone_number', formattedPhoneNumber);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('image', document.getElementById('image').files[0]);
+
+            const response = await fetch('/hospital/signup', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Signup request for hospital has been submitted successfully!");
+                window.location.href = '/hospital/login';
+            } else {
+                document.getElementById('error-message').innerText = result.message || 'Signup failed';
+            }
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈'; // Closed eye when password is visible
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️'; // Open eye when password is hidden
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('name');
+            nameInput.addEventListener('input', (event) => {
+                event.target.value = event.target.value.replace(/[0-9]/g, '');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="back-home">
+            <a href="http://51.20.248.12:8001/">Back to Home</a>
+        </div>
+        <h1>Med Finder</h1>
+    </div>
+
+    <div class="container">
+        <div class="title">
+            <h1>Hospital Signup</h1>
+            <p class="quote">"Connecting care with convenience, one hospital at a time."</p>
+        </div>
+        <form onsubmit="hospitalSignup(event)">
+            <div>
+                <label for="name">Hospital Name:</label>
+                <input type="text" id="name" name="name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required>
+            </div>
+            <div>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+            <div>
+                <label for="gmap_location">Google Map Location:</label>
+                <input type="text" id="gmap_location" name="gmap_location" required>
+            </div>
+            <div>
+                <label for="pin_code">Pin Code:</label>
+                <input type="text" id="pin_code" name="pin_code" required>
+            </div>
+            <div>
+                <label for="phone_number">Phone Number:</label>
+                <div class="phone-container">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" title="Enter a 10-digit phone number" required>
+                </div>
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="toggle-password" onclick="togglePassword()">👁️</button>
+                </div>
+            </div>
+            <div>
+                <label for="image">Hospital Image:</label>
+                <input type="file" id="image" name="image" required>
+            </div>
+            <div>
+                <button type="submit">Signup</button>
+            </div>
+        </form>
+        <p id="error-message"></p>
+    </div>
+</body>
+</html>

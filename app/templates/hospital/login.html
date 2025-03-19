@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+        .header .back-home {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+        .header .back-home a {
+            text-decoration: none;
+            color: #3498db;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+        }
+        .header .back-home a:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .title {
+            margin-bottom: 20px;
+        }
+        .title h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+        .title p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 5px 0 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            text-align: left;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .phone-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .phone-prefix {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #34495e;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        #phone_number {
+            padding-left: 45px;
+        }
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #error-message {
+            margin-top: 10px;
+            color: red;
+            font-size: 14px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .password-container {
+            position: relative;
+        }
+        #toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+        }
+    </style>
+    <script>
+        async function hospitalLogin(event) {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phone_number').value;
+            const formattedPhoneNumber = `+91${phoneNumber}`;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/hospital/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone_number: formattedPhoneNumber, password })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                window.location.href = result.redirect_url || '/hospital/dashboard';
+            } else {
+                document.getElementById('error-message').innerText = result.message || 'Login failed';
+            }
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="back-home">
+            <a href="http://51.20.248.12:8001/">Back to Home</a>
+        </div>
+        <h1>Med Finder</h1>
+        <p>Providing seamless login access for hospitals.</p>
+    </div>
+
+    <div class="container">
+        <div class="title">
+            <h1>Hospital Login</h1>
+            <p>Please enter your credentials to log in.</p>
+        </div>
+        <form onsubmit="hospitalLogin(event)">
+            <div>
+                <label for="phone_number">Phone Number:</label>
+                <div class="phone-container">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" placeholder="type number without +91" title="Enter a 10-digit phone number" required>
+                </div>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="toggle-password" onclick="togglePassword()">👁️</button>
+                </div>
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+
+        <p>Don't have an account? <a href="/hospital/signup">Sign up here</a></p>
+        <p>Forgot your password? <a href="/hospital/forgot-password">Reset it here</a></p>
+
+        <p id="error-message"></p>
+    </div>
+</body>
+</html>

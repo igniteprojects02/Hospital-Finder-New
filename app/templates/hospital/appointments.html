@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - Hospital Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .side-panel {
+            width: 250px;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .side-panel h2 {
+            text-align: center;
+            font-size: 22px;
+        }
+        .side-panel a {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .side-panel a:hover {
+            background-color: #2980b9;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .appointments-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .appointments-table th, .appointments-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .appointments-table th {
+            background-color: #2980b9;
+            color: white;
+        }
+        .appointments-table td {
+            color: #333;
+        }
+        .btn-accept, .btn-complete, .btn-cancel, .btn-edit-history {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .btn-accept {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .btn-accept:hover {
+            background-color: #27ae60;
+        }
+        .btn-complete {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-complete:hover {
+            background-color: #e67e22;
+        }
+        .btn-cancel {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+        .btn-edit-history {
+            background-color: #2980b9;
+            color: white;
+        }
+        .btn-edit-history:hover {
+            background-color: #3498db;
+        }
+        .btn-edit-history.disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .no-appointments {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 20px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            .main-content {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="side-panel">
+            <h2>Med Finder</h2>
+            <a href="/hospital/dashboard">Profile</a>
+            <a href="/hospital/doctors">Doctors</a>
+            <a href="/hospital/appointments">Appointments</a>
+            <a href="/hospital/clients">Clients</a>
+            <div class="logout-btn" style="text-align: center;">
+                <form action="/hospital/logout" method="post">
+                    <button type="submit" style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Appointments</h1>
+                <p>Manage appointments for your hospital.</p>
+            </div>
+
+            <div class="appointments-container">
+                {% if appointments %}
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Doctor</th>
+                            <th>Appointment Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.client }}</td>
+                            <td>{{ appointment.doctor }}</td>
+                            <td>{{ appointment.appointment_time }}</td>
+                            <td>{{ appointment.status }}</td>
+                            <td>
+                                {% if appointment.status == "Pending" %}
+                                <button class="btn-accept" onclick="updateAppointmentStatus({{ appointment.id }}, 'Confirmed')">Confirm</button>
+                                <button class="btn-cancel" onclick="updateAppointmentStatus({{ appointment.id }}, 'Cancelled')">Cancel</button>
+                                {% elif appointment.status == "Confirmed" %}
+                                <button class="btn-complete" onclick="updateAppointmentStatus({{ appointment.id }}, 'Completed')">Complete</button>
+                                <button class="btn-cancel" onclick="updateAppointmentStatus({{ appointment.id }}, 'Cancelled')">Cancel</button>
+                                <a href="{{ url_for('hospital_routes.edit_medical_history_from_appointment', appointment_id=appointment.id) }}">
+                                    <button class="btn-edit-history" id="edit-btn-{{ appointment.id }}" data-appointment-time="{{ appointment.appointment_time }}">Edit Medical History</button>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="no-appointments">
+                    <p>No appointments scheduled at this time.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();  // Reload the page if loaded from cache
+            }
+        });
+
+        function updateAppointmentStatus(appointmentId, status) {
+            fetch(`/hospital/appointments/${appointmentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload(); // Refresh page to show updated status
+                }
+            })
+            .catch(error => console.error('Error updating appointment status:', error));
+        }
+
+        // Client-side check for enabling/disabling Edit Medical History button
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.btn-edit-history');
+            editButtons.forEach(button => {
+                const appointmentTimeStr = button.getAttribute('data-appointment-time');
+                const appointmentTime = new Date(appointmentTimeStr.replace(' ', 'T')); // Convert to ISO format
+                const currentTime = new Date();
+
+                if (currentTime < appointmentTime) {
+                    button.classList.add('disabled');
+                    button.title = 'Editing available after appointment time';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

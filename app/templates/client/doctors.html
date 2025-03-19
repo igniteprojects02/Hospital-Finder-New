@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors at {{ hospital.name }}</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 4px solid #2980b9;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Doctor Card Styling */
+        .doctor-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .doctor-card h3 {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+
+        .doctor-card p {
+            margin: 5px 0;
+        }
+
+        .book-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .book-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #c0392b;
+        }
+
+        p {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Doctors at {{ hospital.name }}</h1>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="container">
+        {% if doctors %}
+            {% for doctor in doctors %}
+                <div class="doctor-card">
+                    <h3>{{ doctor.name }}</h3>
+                    <p><strong>Specialty:</strong> {{ doctor.specialty }}</p>
+                    <p><strong>Availability:</strong> {{ doctor.availability }}</p>
+                    <a href="/client/appointments/book/{{ doctor.id }}" class="book-button">Book Appointment</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No doctors available for this hospital.</p>
+        {% endif %}
+
+        <a href="/client/hospitals/{{ hospital.id }}" class="back-button">Back to Details</a>
+    </div>
+</body>
+</html>

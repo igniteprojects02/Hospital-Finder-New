@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px; /* Adds space between header and container */
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .header .back-home {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        .header .back-home a {
+            text-decoration: none;
+            color: #3498db;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+        }
+
+        .header .back-home a:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .title {
+            margin-bottom: 20px;
+        }
+
+        .title h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .title p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 5px 0 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #error-message {
+            margin-top: 10px;
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        async function adminLogin(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // On success, redirect to the dashboard
+                window.location.href = result.redirect_url;
+            } else {
+                // Show error message if credentials are invalid
+                document.getElementById('error-message').innerText = result.message || 'Login failed';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="back-home">
+            <a href="http://51.20.248.12:8001/">Back to Home</a>
+        </div>
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+
+    <div class="container">
+        <div class="title">
+            <h1>Admin Panel Login</h1>
+            <p>Please enter your credentials to access the admin panel.</p>
+        </div>
+        <form onsubmit="adminLogin(event)">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+
+        <p id="error-message"></p>
+    </div>
+</body>
+</html>

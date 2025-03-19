@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin-top: 10px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 120px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            margin-bottom: 20px;
+        }
+
+        .title h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .title p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 5px 0 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .phone-container, .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #34495e;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        #phone_number {
+            padding-left: 45px; /* Space for +91 prefix */
+        }
+
+        #toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            color: #34495e;
+        }
+
+        #toggle-password:hover {
+            color: #2980b9;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #error-message {
+            margin-top: 10px;
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        async function clientSignup(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const phoneNumber = document.getElementById('phone_number').value;
+            const formattedPhoneNumber = `+91${phoneNumber}`; // Append +91 to the phone number
+
+            const formData = new FormData();
+            formData.append('phone_number', formattedPhoneNumber);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('name', document.getElementById('name').value);
+            formData.append('age', document.getElementById('age').value);
+            formData.append('address', document.getElementById('address').value);
+
+            const response = await fetch('/client/signup', {
+                method: 'POST',
+                body: formData, // Send as form data instead of JSON
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = '/client/login';
+            } else {
+                document.getElementById('error-message').innerText = result.message || 'Signup failed';
+            }
+        }
+
+        // Prevent numbers in the name field
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('name');
+            nameInput.addEventListener('input', (event) => {
+                event.target.value = event.target.value.replace(/[0-9]/g, '');
+            });
+        });
+
+        // Toggle password visibility with eye icon
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈'; // Closed eye when password is visible
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️'; // Open eye when password is hidden
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+    <br><br>
+    <div class="container">
+        <div class="title">
+            <h1>Client Signup</h1>
+        </div>
+        <form onsubmit="clientSignup(event)">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required>
+            </div>
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <div>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="phone_number">Phone Number:</label>
+                <div class="phone-container">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" placeholder="Number without +91" title="Enter a 10-digit phone number" required>
+                </div>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="toggle-password" onclick="togglePassword()">👁️</button>
+                </div>
+            </div>
+            <div>
+                <button type="submit">Signup</button>
+            </div>
+        </form>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+</body>
+</html>

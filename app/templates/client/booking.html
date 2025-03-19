@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med Appointment</title>
+    <style>
+        .cancel-button {
+            background-color: #ff0000;
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .cancel-button:hover {
+            background-color: #a3342c;
+        }
+        .cancel-button.disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .confirmation-message {
+            padding: 15px;
+            background-color: #dff0d8;
+            border-radius: 5px;
+            margin-top: 15px;
+            color: #3c763d;
+        }
+        .error-message {
+            padding: 15px;
+            background-color: #f2dede;
+            border-radius: 5px;
+            margin-top: 15px;
+            color: #a94442;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+        .appointments {
+            margin-top: 30px;
+        }
+        .appointments h2 {
+            color: #34495e;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .appointments ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .appointments li {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Hospital Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+
+    <div class="container">
+        <h1>Book Appointment with Dr. {{ doctor.name }}</h1>
+        <p><strong>Specialty:</strong> {{ doctor.specialty }}</p>
+        <p><strong>Availability:</strong> {{ doctor.availability }}</p>
+
+        <form method="POST" action="{{ url_for('client_routes.book_appointment', doctor_id=doctor.id) }}">
+            <input type="datetime-local" name="appointment_time" required>
+            <input type="hidden" name="doctor_id" value="{{ doctor.id }}">
+            <button type="submit">Book Appointment</button>
+        </form>
+
+        {% if success_message %}
+            <div class="confirmation-message">
+                <p>{{ success_message }}</p>
+            </div>
+        {% endif %}
+        {% if error_message %}
+            <div class="error-message">
+                <p>{{ error_message }}</p>
+            </div>
+        {% endif %}
+
+        <div class="appointments">
+            <h2>Your Booked Appointments</h2>
+            {% if appointments %}
+                <ul>
+                    {% for appointment in appointments %}
+                        <li>
+                            <strong>Appointment Time:</strong> {{ appointment.appointment_time }}<br>
+                            <strong>Status:</strong> {{ appointment.status }}<br>
+                            <strong>Doctor:</strong> {{ appointment.doctor.name }}<br>
+                            <a href="{{ url_for('client_routes.cancel_appointment', appointment_id=appointment.id) }}" 
+                               class="cancel-button {% if appointment.status in ['Confirmed', 'Completed'] %}disabled{% endif %}"
+                               {% if appointment.status in ['Confirmed', 'Completed'] %}title="Cancellation not allowed for this status"{% endif %}>
+                                Cancel Appointment
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No appointments booked yet.</p>
+            {% endif %}
+        </div>
+
+        <a href="{{ url_for('client_routes.get_hospital_details', hospital_id=doctor.hospital.id) }}" class="back-button">Back to Hospital Details</a>
+    </div>
+</body>
+</html>

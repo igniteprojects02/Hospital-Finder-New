@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Hospital Finder</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .quote {
+            font-style: italic;
+            color: #f1f1f1;
+            margin-top: 10px;
+        }
+        .header .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .admin-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #2980b9;
+            margin-top: 20px;
+        }
+        .card {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .hospital-list h3 {
+            color: #2980b9;
+            margin-bottom: 15px;
+            margin-left: 15px;
+        }
+        .hospital-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-group button {
+            margin: 0 5px;
+        }
+        .hospital-img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        .hospital-info h5 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #343a40;
+            flex-grow: 1;
+        }
+        .hospital-info p {
+            margin: 5px 0;
+        }
+        .hospital-info a {
+            text-decoration: none;
+            color: #2980b9;
+        }
+        .hospital-info a:hover {
+            text-decoration: underline;
+        }
+        .scroll-section {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .trash-toggle {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="header">
+        <b><h1>Med Finder</h1></b>
+        <p class="quote">"Connecting care with convenience, one hospital at a time."</p>
+        <div class="logout-btn">
+            <form method="POST" action="/admin/logout">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Dashboard Title -->
+    <div class="admin-title">
+        <b>Admin Panel Dashboard</b>
+    </div>
+
+    <br>
+
+    <!-- Signup Requests Section -->
+    <div class="hospital-list">
+        <h3><b>Signup Requests</b></h3>
+        <div id="signup-requests" class="scroll-section">
+            <!-- Signup request hospitals will be populated here dynamically -->
+        </div>
+    </div>
+
+    <!-- Approved Hospitals Section -->
+    <div class="hospital-list">
+        <h3><b>Approved Hospitals</b></h3>
+        <div id="approved-hospitals" class="scroll-section">
+            <!-- Approved hospitals will be populated here dynamically -->
+        </div>
+    </div>
+
+    <!-- Trash Section Toggle -->
+    <div class="trash-toggle">
+        <button class="btn btn-secondary" onclick="toggleTrash()">Show Trash</button>
+    </div>
+
+    <!-- Trash Hospitals Section (Hidden by Default) -->
+    <div class="hospital-list" id="trash-section" style="display: none;">
+        <h3><b>Removed Hospitals (Trash)</b></h3>
+        <div id="trash-hospitals" class="scroll-section">
+            <!-- Removed hospitals will be populated here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        // Redirect after logout and prevent going back
+        if (window.location.pathname === '/admin/logout') {
+            window.location.replace('/admin/login');
+        }
+
+        // Load Signup Requests
+        async function loadSignupRequests() {
+            try {
+                const response = await fetch('/admin/signup-requests');
+                const hospitals = await response.json();
+                const signupRequestsDiv = document.getElementById('signup-requests');
+                signupRequestsDiv.innerHTML = '';
+
+                if (hospitals.length === 0) {
+                    signupRequestsDiv.innerHTML = '<p>No signup requests found.</p>';
+                } else {
+                    hospitals.forEach(hospital => {
+                        const hospitalCard = document.createElement('div');
+                        hospitalCard.classList.add('card');
+                        hospitalCard.innerHTML = `
+                            <div class="hospital-card">
+                                <div class="d-flex">
+                                    <img src="/hospital/hospital-image/${hospital.id}" alt="${hospital.name}" class="hospital-img">
+                                    <div class="hospital-info">
+                                        <b><h5>${hospital.name}</h5></b>
+                                        <p>Address: ${hospital.address}</p>
+                                        <p>Phone Number: ${hospital.phone_number}</p>
+                                        <p>Pin Code: ${hospital.pin_code}</p>
+                                        <p>Description: ${hospital.description}</p>
+                                        <p>Location: <a href="${hospital.gmap_location}" target="_blank">View on Google Maps</a></p>
+                                    </div>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-success" onclick="approveHospital(${hospital.id})">Approve</button>
+                                    <button class="btn btn-danger" onclick="declineHospital(${hospital.id})">Decline</button>
+                                </div>
+                            </div>
+                        `;
+                        signupRequestsDiv.appendChild(hospitalCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading signup requests:', error);
+            }
+        }
+
+        // Load Approved Hospitals
+        async function loadApprovedHospitals() {
+            try {
+                const response = await fetch('/admin/approved-hospitals');
+                const hospitals = await response.json();
+                const approvedHospitalsDiv = document.getElementById('approved-hospitals');
+                approvedHospitalsDiv.innerHTML = '';
+
+                if (hospitals.length === 0) {
+                    approvedHospitalsDiv.innerHTML = '<p>No approved hospitals found.</p>';
+                } else {
+                    hospitals.forEach(hospital => {
+                        const hospitalCard = document.createElement('div');
+                        hospitalCard.classList.add('card');
+                        hospitalCard.innerHTML = `
+                            <div class="hospital-card">
+                                <div class="d-flex">
+                                    <img src="/hospital/hospital-image/${hospital.id}" alt="${hospital.name}" class="hospital-img">
+                                    <div class="hospital-info">
+                                        <b><h5>${hospital.name}</h5></b>
+                                        <p>Address: ${hospital.address}</p>
+                                        <p>Phone Number: ${hospital.phone_number}</p>
+                                        <p>Pin Code: ${hospital.pin_code}</p>
+                                        <p>Description: ${hospital.description}</p>
+                                        <p>Location: <a href="${hospital.gmap_location}" target="_blank">View on Google Maps</a></p>
+                                    </div>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-danger" onclick="removeHospital(${hospital.id})">Remove</button>
+                                </div>
+                            </div>
+                        `;
+                        approvedHospitalsDiv.appendChild(hospitalCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading approved hospitals:', error);
+            }
+        }
+
+        // Load Trash Hospitals
+        async function loadTrashHospitals() {
+            try {
+                const response = await fetch('/admin/trash');
+                const hospitals = await response.json();
+                const trashHospitalsDiv = document.getElementById('trash-hospitals');
+                trashHospitalsDiv.innerHTML = '';
+
+                if (hospitals.length === 0) {
+                    trashHospitalsDiv.innerHTML = '<p>No removed hospitals found.</p>';
+                } else {
+                    hospitals.forEach(hospital => {
+                        const hospitalCard = document.createElement('div');
+                        hospitalCard.classList.add('card');
+                        hospitalCard.innerHTML = `
+                            <div class="hospital-card">
+                                <div class="d-flex">
+                                    <img src="/hospital/hospital-image/${hospital.id}" alt="${hospital.name}" class="hospital-img">
+                                    <div class="hospital-info">
+                                        <b><h5>${hospital.name}</h5></b>
+                                        <p>Address: ${hospital.address}</p>
+                                        <p>Phone Number: ${hospital.phone_number}</p>
+                                        <p>Pin Code: ${hospital.pin_code}</p>
+                                        <p>Description: ${hospital.description}</p>
+                                        <p>Location: <a href="${hospital.gmap_location}" target="_blank">View on Google Maps</a></p>
+                                        <p><strong>Reason for Removal:</strong> ${hospital.removed_reason}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        trashHospitalsDiv.appendChild(hospitalCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading trash hospitals:', error);
+            }
+        }
+
+        // Toggle Trash Section Visibility
+        function toggleTrash() {
+            const trashSection = document.getElementById('trash-section');
+            const toggleButton = document.querySelector('.trash-toggle button');
+            if (trashSection.style.display === 'none') {
+                trashSection.style.display = 'block';
+                toggleButton.textContent = 'Hide Trash';
+                loadTrashHospitals(); // Load trash data when showing
+            } else {
+                trashSection.style.display = 'none';
+                toggleButton.textContent = 'Show Trash';
+            }
+        }
+
+        // Approve Hospital
+        async function approveHospital(hospitalId) {
+            try {
+                const response = await fetch(`/admin/approve-hospital/${hospitalId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadSignupRequests();
+                    loadApprovedHospitals();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error approving hospital:', error);
+            }
+        }
+
+        // Decline Hospital
+        async function declineHospital(hospitalId) {
+            try {
+                const response = await fetch(`/admin/decline-hospital/${hospitalId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadSignupRequests();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error declining hospital:', error);
+            }
+        }
+
+        // Remove Hospital with Reason Prompt
+        async function removeHospital(hospitalId) {
+            const reason = prompt("Please enter the reason for removing this hospital:");
+            if (reason === null || reason.trim() === "") {
+                alert("A reason is required to remove a hospital.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/remove-hospital/${hospitalId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason: reason.trim() })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadApprovedHospitals();
+                    if (document.getElementById('trash-section').style.display === 'block') {
+                        loadTrashHospitals(); // Refresh trash if visible
+                    }
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error removing hospital:', error);
+            }
+        }
+
+        // Load data on page load
+        window.onload = () => {
+            loadSignupRequests();
+            loadApprovedHospitals();
+        };
+
+        // Prevent back navigation after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

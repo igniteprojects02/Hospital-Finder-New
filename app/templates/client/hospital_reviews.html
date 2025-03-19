@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews for {{ hospital.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        #add-review {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        #add-review h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        form select, form textarea, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        .review-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #f7f7f7;
+            border-radius: 8px;
+        }
+
+        .review-card p {
+            margin: 5px 0;
+        }
+
+        .review-card .stars {
+            color: #f39c12;
+            font-size: 18px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reviews for {{ hospital.name }}</h1>
+
+        
+        <!-- All Reviews Section -->
+        <h2>All Reviews</h2>
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="review-card">
+                    <p><strong>Client:</strong> {{ review.client.username }}</p>
+                    <p><strong>Rating:</strong>
+                        <span class="stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</span>
+                    </p>
+                    <p><strong>Review:</strong> {{ review.review_text }}</p>
+                    <p><strong>Reply:</strong> {{ review.reply_text or 'No reply yet' }}</p>
+                    <p><small><em>{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</em></small></p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews yet for this hospital.</p>
+        {% endif %}
+
+        <!-- Add a Review Section -->
+        {% if current_user.role == 'client' %}
+            <div id="add-review">
+                <h3>Add Your Review</h3>
+                <form method="post" action="/client/hospital/{{ hospital.id }}/reviews/add">
+                    <label for="rating">Rating:</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">-- Select --</option>
+                        <option value="1">1 ★</option>
+                        <option value="2">2 ★★</option>
+                        <option value="3">3 ★★★</option>
+                        <option value="4">4 ★★★★</option>
+                        <option value="5">5 ★★★★★</option>
+                    </select>
+                    <label for="review_text">Review:</label>
+                    <textarea id="review_text" name="review_text" rows="3" required></textarea>
+                    <button type="submit" class="btn-submit">Submit Review</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        
+        <a href="/client/hospitals/{{ hospital.id }}" class="back-button">Back to Details</a>
+    </div>
+</body>
+</html>

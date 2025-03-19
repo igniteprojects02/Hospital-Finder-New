@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Medical History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .side-panel {
+            width: 250px;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .side-panel h2 {
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .side-panel a {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .side-panel a:hover {
+            background-color: #2980b9;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container button:hover {
+            background-color: #2980b9;
+        }
+
+        .client-info {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #2c3e50;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .client-info p {
+            margin: 5px 0;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+        }
+
+        .history-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .history-card {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        .history-card p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="side-panel">
+            <h2>Med Finder</h2>
+            <a href="/hospital/dashboard">Profile</a>
+            <a href="/hospital/doctors">Doctors</a>
+            <a href="/hospital/appointments">Appointments</a>
+            <a href="/hospital/clients">Clients</a>
+            <div class="logout-btn" style="text-align: center;">
+                <form action="/hospital/logout" method="post">
+                    <button type="submit" style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Edit Medical History</h1>
+                <p>Add or update medical history for your client.</p>
+                <div class="client-info">
+                    <p><strong>Name:</strong> {{ client.name }}</p>
+                    <p><strong>Age:</strong> {{ client.age }}</p>
+                    <p><strong>Doctor:</strong> {{ doctor.name }}</p>  <!-- Doctor's name -->
+                </div>
+            </div>
+
+            {% if success %}
+                <div class="alert alert-success">
+                    {{ success }}
+                </div>
+            {% elif error %}
+                <div class="alert alert-error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <div class="form-container">
+                <form method="POST" action="/hospital/appointments/edit_history/{{ appointment.id }}">
+                    <label for="medical_note">Medical Note:</label>
+                    <textarea id="medical_note" name="medical_note" rows="6" placeholder="Enter medical notes here..." required></textarea>
+
+                    <label for="security_key">Security Key:</label>
+                    <input type="password" id="security_key" name="security_key" required>
+
+                    <button type="submit">Save History</button>
+                </form>
+            </div>
+
+            <h3>Existing Medical History</h3>
+
+            <div class="history-container">
+                {% if medical_history %}
+                    {% for history in medical_history %}
+                        <div class="history-card">
+                            <p><strong>{{ history.timestamp }}</strong></p>
+                            <p>{{ history.medical_note }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No medical history available for this client.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();  // Reload the page if it was loaded from cache
+            }
+        });
+    </script>
+</body>
+</html>

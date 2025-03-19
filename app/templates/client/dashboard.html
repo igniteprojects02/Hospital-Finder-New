@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .header-buttons {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-buttons button {
+            background-color: white;
+            color: #3498db;
+            border: 1px solid #2980b9;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-buttons button:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 6rem auto 2rem; /* Space for fixed header */
+            padding: 2rem;
+            background: rgb(149, 212, 255);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+        }
+
+        .container h1 {
+            font-size: 1.75rem;
+            color: #34495e;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .container p {
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-card {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-card a {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .option-card a:hover {
+            color: #2980b9;
+        }
+
+        .chatbot {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 320px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            z-index: 900;
+        }
+
+        .chatbot h3 {
+            font-size: 1.1rem;
+            color: #34495e;
+            margin-bottom: 0.75rem;
+        }
+
+        .chatbot form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chatbot input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .chatbot button {
+            padding: 0.75rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chatbot button:hover {
+            background-color: #2980b9;
+        }
+
+        .chatbot-response {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #f4f6f9;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .chatbot-response a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .chatbot-response a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .container {
+                margin: 5rem 1rem 1rem;
+                padding: 1rem;
+            }
+
+            .container h1 {
+                font-size: 1.5rem;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .chatbot {
+                width: 90%;
+                right: 5%;
+                bottom: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+        <div class="header-buttons">
+            <form action="/client/logout" method="POST" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+    <br><br>
+
+    <div class="container">
+        <h1>Welcome!</h1>
+        <p>Your dashboard is ready to use. Explore the options below:</p>
+        <div class="options">
+            <div class="option-card">
+                <a href="/client/profile">View Profile</a>
+            </div>
+            <div class="option-card">
+                <a href="/client/hospitals/search">Hospitals</a>
+            </div>
+            <div class="option-card">
+                <a href="/client/medical-history">Medical History</a>
+            </div>
+            <div class="option-card">
+                <a href="/client/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="chatbot">
+        <h3>Ask the Bot</h3>
+        <form id="chat-form">
+            <input type="text" id="symptom" placeholder="Enter symptoms (e.g., head pain)" required>
+            <button type="submit">Ask</button>
+        </form>
+        <div id="response-container"></div>
+    </div>
+
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload(); // Reload the page if loaded from cache
+            }
+        });
+
+        document.getElementById('chat-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const symptom = document.getElementById('symptom').value;
+            const responseContainer = document.getElementById('response-container');
+            
+            const response = await fetch('/client/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symptom: symptom }),
+            });
+
+            const data = await response.json();
+            const responseMessage = data.message;
+            const hospitalLink = data.hospital_link;
+
+            responseContainer.innerHTML = `
+                <div class="chatbot-response">
+                    <p>${responseMessage}</p>
+                    <a href="${hospitalLink}" target="_blank">Find a Hospital</a>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        input, button, select {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .header-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .header-buttons a {
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            color: #3498db;
+            background-color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+        }
+
+        .header-buttons a:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        ul li a:hover {
+            color: #2980b9;
+        }
+
+        ul li span {
+            font-size: 14px;
+            color: #555;
+            display: block;
+        }
+
+        .stars {
+            color: #f39c12;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+        <div class="header-buttons">
+            <a href="/client/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Search Hospitals</h1>
+        <form method="GET" action="{{ url_for('client_routes.search_hospitals') }}">
+            <input type="text" name="query" placeholder="Search by place, pin code, or review keyword" value="{{ query or '' }}">
+            <select name="sort_by">
+                <option value="">Sort by</option>
+                <option value="rating_desc" {% if request.args.get('sort_by') == 'rating_desc' %}selected{% endif %}>Rating (High to Low)</option>
+                <option value="rating_asc" {% if request.args.get('sort_by') == 'rating_asc' %}selected{% endif %}>Rating (Low to High)</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <h2>Available Hospitals:</h2>
+        {% if hospitals %}
+        <ul>
+            {% for hospital, average_rating in hospitals %}
+                <li>
+                    <a href="/client/hospitals/{{ hospital.id }}">{{ hospital.name }}</a>
+                    <span class="stars">{{ '★' * int(average_rating) }}{{ '☆' * (5 - int(average_rating)) }}</span>
+                    <span>Location: {{ hospital.address }}</span>
+                    <span>Average Rating: {{ average_rating }} ★</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No hospitals found matching the search criteria.</p>
+        {% endif %}
+        <a href="/client/dashboard" class="back-button">Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Clients</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 250px;
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .side-panel h2 {
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .side-panel a {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .side-panel a:hover {
+            background-color: #2980b9;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #2980b9;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3498db;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            text-align: left;
+            width: 100%;
+        }
+
+        .profile-info h2 {
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        .profile-info p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+
+        .edit-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* No Clients Message */
+        .no-clients {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            .main-content {
+                padding: 10px;
+            }
+        }
+
+        .alert {
+            display: none;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .client-card {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+    <script>
+        function logout() {
+            fetch('/hospital/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    window.location.href = '/hospital/login';
+                }
+            })
+            .catch(error => console.error('Error during logout:', error));
+        }
+
+        function showAlert(message) {
+            const alertBox = document.getElementById('alert');
+            alertBox.textContent = message;
+            alertBox.classList.add('show');
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3000);
+        }
+
+        function navigateToMedicalHistory(clientId) {
+            window.location.href = `/hospital/client/${clientId}/history`;
+        }
+
+        function navigateToEditHistory(clientId) {
+            window.location.href = `/hospital/client/${clientId}/history/edit`;
+        }
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="side-panel">
+            <h2>Med Finder</h2>
+            <a href="/hospital/dashboard">Profile</a>
+            <a href="/hospital/doctors">Doctors</a>
+            <a href="/hospital/appointments">Appointments</a>
+            <a href="/hospital/clients">Clients</a>
+            <div class="logout-btn" style="text-align: center;">
+                <form action="/hospital/logout" method="post">
+                    <button type="submit" style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Clients</h1>
+                <p>Manage your hospital's clients and their medical histories.</p>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <div class="client-list">
+                {% if clients %}
+                    {% for client in clients %}
+                        <div class="client-card">
+                            <h3>{{ client.client_details.name }}</h3>
+                            <p><strong>Age:</strong> {{ client.client_details.age }}</p>
+                            <p><strong>Email:</strong> {{ client.email }}</p>
+                            <p><strong>Address:</strong> {{ client.client_details.address }}</p>
+                            <button class="edit-btn" onclick="navigateToMedicalHistory({{ client.id }})">View Medical History</button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-clients">
+                        <p>No clients found at this time.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

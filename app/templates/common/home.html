@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med Finder - Connecting Care with Convenience</title>
+    <style>
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f9f9f9;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Styles */
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 3px solid #80a2ff;
+            padding: 5px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0078d7, #005bb5);
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .btn {
+            background: white;
+            color: #0078d7;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s ease-in-out;
+            display: inline-block;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.8s ease-in-out;
+        }
+
+        .btn:hover {
+            background: #f1f1f1;
+            transform: scale(1.05);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #0078d7;
+        }
+
+        .feature-list {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .feature {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            width: 320px;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #0078d7;
+        }
+
+        .feature p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: #666;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: #0078d7;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            margin-top: 50px;
+            border-top-left-radius: 50px;
+            border-top-right-radius: 50px;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px;
+            background: #333;
+            color: white;
+            font-size: 1rem;
+        }
+
+        footer a {
+            color: #1de9b6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <!-- Add your logo here -->
+            <h1>Connecting Care with Convenience</h1>
+            <p>Find hospitals, book appointments, and manage your medical history seamlessly.</p>
+            <a href="/hospital/login" class="btn">Hospital Login</a>
+            <a href="/client/login" class="btn">Client Login</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>Why Choose Med Finder?</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <h3>🏥 Find Hospitals Easily</h3>
+                <p>Search for hospitals by location or pin code and view them on Google Maps.</p>
+            </div>
+            <div class="feature">
+                <h3>👨‍⚕️ Book Appointments</h3>
+                <p>Schedule appointments with doctors based on their availability.</p>
+            </div>
+            <div class="feature">
+                <h3>📝 Manage Medical History</h3>
+                <p>Access and update your medical history securely with timestamped records.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Start Your Healthcare Journey Today!</h2>
+        <a href="/admin/login" class="btn">Admin Login</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Med Finder | <a href="#">Privacy Policy</a></p>
+    </footer>
+
+</body>
+</html>

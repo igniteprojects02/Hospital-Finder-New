@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea {
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+
+    <div class="container">
+        <h1>Edit Profile</h1>
+        <form action="/client/edit-profile" method="post">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ profile.email }}">
+
+            {% if profile.client_info %}
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ profile.client_info.name }}">
+
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" value="{{ profile.client_info.age }}">
+
+                <label for="address">Address</label>
+                <textarea id="address" name="address">{{ profile.client_info.address }}</textarea>
+            {% endif %}
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .header-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .header-buttons a {
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            color: #3498db;
+            background-color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+        }
+
+        .header-buttons a:hover {
+            background-color: #e8f4fa;
+            color: #2980b9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+        <div class="header-buttons">
+            <a href="/client/dashboard">Dashboard</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Profile Details</h1>
+        {% if profile.client_info %}
+
+            <p><strong>Name:</strong> {{ profile.client_info.name }}</p>
+            <p><strong>Age:</strong> {{ profile.client_info.age }}</p>
+            <p><strong>Address:</strong> {{ profile.client_info.address }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.client_info.phone_number }}</p>
+        {% endif %}
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <a href="/client/edit-profile" class="button">Edit Profile</a>
+    </div>
+</body>
+</html>

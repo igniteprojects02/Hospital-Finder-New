@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .doctor-card {
+            background: #ecf0f1;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctor-card h3 {
+            margin: 0;
+            color: #2980b9;
+        }
+
+        .doctor-card p {
+            margin: 5px 0;
+        }
+
+        .book-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .book-button:hover {
+            background-color: #2980b9;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+
+        .hospital-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Med Finder</h1>
+        <p>Connecting care with convenience, one hospital at a time.</p>
+    </div>
+
+    <div class="container">
+        <h1>{{ hospital.name }}</h1>
+        
+        <!-- Hospital Image -->
+        {% if hospital.image %}
+            <img src="{{ url_for('hospital_routes.get_hospital_image', hospital_id=hospital.id) }}" alt="Hospital Image" class="hospital-image">
+        {% else %}
+            <p>No image available for this hospital.</p>
+        {% endif %}
+        
+        <p><strong>Address:</strong> {{ hospital.address }}</p>
+        <p><strong>Pin Code:</strong> {{ hospital.pin_code }}</p>
+        <p><strong>Location:</strong> <a href="{{ hospital.gmap_location }}" target="_blank">View on Google Maps</a></p>
+        <p><strong>Description:</strong> {{ hospital.description }}</p>
+        <p><strong>Average Rating:</strong> 
+            <span class="stars">{{ '★' * average_rating }}{{ '☆' * (5 - average_rating) }}</span>
+            ({{ review_count }} reviews)
+        </p>
+    
+        <!-- Buttons to View Doctors and Reviews -->
+        <div>
+            <a href="/client/hospital/{{ hospital.id }}/doctors" class="book-button">View Doctors</a>
+            <a href="/client/hospital/{{ hospital.id }}/reviews" class="book-button">View Reviews</a>
+        </div>
+    
+        <a href="/client/hospitals/search" class="back-button">Back to Search</a>
+    </div>
+</body>
+</html>
