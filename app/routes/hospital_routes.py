@@ -36,9 +36,6 @@ def allowed_file(filename):
 bp = Blueprint('hospital_routes', __name__)
 
 # Hardcoded Twilio credentials (replace with your actual credentials)
-TWILIO_ACCOUNT_SID = 'AC80b59d3cb6af9435a7bf0abce50f0c26'
-TWILIO_AUTH_TOKEN = 'ff65e1030d4610f271113b758da14c9b'
-TWILIO_PHONE_NUMBER= '+1 249 449 4282'
 
 # Initialize Twilio client with hardcoded credentials
 twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
